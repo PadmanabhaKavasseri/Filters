@@ -7,7 +7,7 @@
 
 using namespace std;
 
-//============================Add function prototypes here======================
+//Function Prototypes
 void dummy(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB]);
 void convolve(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB],
               int N, double kernel[][11]);
@@ -15,7 +15,6 @@ void sobel(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB]);
 void gaussian_filter(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB], int N, double sigma);
 void gaussian(double k[][11], int N, double sigma);
 void unsharp(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB], int N, double sigma, double alpha);
-//============================Do not change code in main()======================
 
 #ifndef AUTOTEST
 //const int SIZE = 45.7;
@@ -98,15 +97,8 @@ int main(int argc, char* argv[])
 
 #endif
 
-//=========================End Do not change code in main()=====================
-
-
 // Creates an identity kernel (dummy kernel) that will simply
 // copy input to output image and applies it via convolve()
-//
-// ** This function is complete and need not be changed.
-// Use this as an example of how to create a kernel array, fill it in
-// appropriately and then use it in a call to convolve.
 void dummy(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB])
 {
     double k[11][11];
@@ -120,21 +112,15 @@ void dummy(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB])
     k[1][1] = 1;
     convolve(out, in, 3, k);
 }
-
-
+ 
 // Convolves an input image with an NxN kernel to produce the output kernel
-// You will need to complete this function by following the
-//  instructions in the comments
-
 void convolve(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB],
               int N, double kernel[][11])
 {
-
-    int padded[SIZE+10][SIZE+10][RGB];  // Use for input image with appropriate
-    // padding
-    int temp[SIZE][SIZE][RGB];          // Use for the unclamped output pixel
-    // values then copy from temp to out,
-    // applying clamping
+    // Use for input image with appropriate padding
+    int padded[SIZE+10][SIZE+10][RGB]; 
+    //Use for the unclamped output pixel values then copuy from temp to out, applying clamping
+    int temp[SIZE][SIZE][RGB];          
 
     //first set all of padded to 0 (black)
     for(int i= 0; i<(SIZE + 10); i++){
@@ -144,8 +130,7 @@ void convolve(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB],
             }
         }
     }
-
-
+  
     //now copy input into padding to appropriate locations
     for(int i = (N/2); i<(SIZE+(N/2)); i++){
         for(int j = (N/2); j<(SIZE+(N/2)); j++) {
@@ -165,11 +150,8 @@ void convolve(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB],
         }
     }
 
-    //now perform convolve (using convolution equation on each pixel of the
-    // actual image) placing the results in temp (i.e. unclamped result)
-    //Here we give you the structure of the convolve for-loops, you need
-    //to figure out the loop limits
-
+    //performing convolve (using convolution equation on each pixel of the
+    // actual image) placing the results in temp aka unclamped results
     for(int y = N/2; y < SIZE + N/2 ;y++) {
         for (int x = N/2; x < SIZE + N/2; x++) {
             for (int k = 0; k < RGB; k++) {
@@ -182,7 +164,7 @@ void convolve(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB],
         }
     }
 
-    //now clamp and copy to output
+    //clamping and copying to output
     for(int i = 0; i<(SIZE); i++){
         for(int j = 0; j<(SIZE); j++) {
             for (int k = 0; k < RGB; k++) {
@@ -196,8 +178,6 @@ void convolve(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB],
         }
     }
 
-    // You may need to cast to avoid warnings from the compiler:
-    // (i.e. out[i][j][k] = (unsigned char) temp[i][j][k];)
     for(int i = 0; i<(SIZE); i++){
         for(int j = 0; j<(SIZE); j++) {
             for (int k = 0; k < RGB; k++) {
@@ -210,8 +190,7 @@ void convolve(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB],
 
 }
 
-// You will need to complete this function by following the
-//  instructions in the comments
+//Sobel Filter
 void sobel(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB])
 {
     double k[11][11];
@@ -234,7 +213,7 @@ void sobel(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB])
     }
 
 
-    // Copy in 1st 3x3 horizontal sobel kernel (i.e. copy s_h1 into k)
+    // Copy in 1st 3x3 horizontal sobel kernel 
     for(int i = 0; i<3; i++){
         for(int j = 0; j<3; j++) {
             k[i][j] = s_h1[i][j];
@@ -246,7 +225,7 @@ void sobel(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB])
     convolve(h1_soble,in,3,k);
 
 
-    // Copy in 2nd 3x3 horizontal sobel kernel (i.e. copy s_h2 into k)
+    // Copy in 2nd 3x3 horizontal sobel kernel 
     for(int i = 0; i<3; i++){
         for(int j = 0; j<3; j++) {
             k[i][j] = s_h2[i][j];
@@ -285,6 +264,8 @@ void gaussian_filter(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RG
     gaussian(kernel,N,sigma);
     convolve(out,in,N,kernel);
 }
+
+//Gaussian Filter
 void gaussian(double k[][11], int N, double sigma){
     //creates the kernel
 
@@ -308,6 +289,7 @@ void gaussian(double k[][11], int N, double sigma){
 
 }
 
+//Unsharp Filter
 void unsharp(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB], int N, double sigma, double alpha){
     unsigned char B[SIZE][SIZE][RGB];
     gaussian_filter(B,in,N,sigma);
@@ -328,16 +310,5 @@ void unsharp(unsigned char out[][SIZE][RGB], unsigned char in[][SIZE][RGB], int 
                 
             }
         }
-    }
-    
-    
-
-    
+    } 
 }
-
-
-// Add the rest of your functions here (i.e. gaussian, gaussian_filter, unsharp)
-
-
-// ./filter input.bmp blur 3 1.5 output.bmp
-// ./filter usc_ucla_wikimedia.bmp unsharp 5 2.0 0.7 usc_ucla_unsharp.bmp
